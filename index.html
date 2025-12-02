@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>음악 수행평가 프로그램</title>
+    <base href="/music-test-2grade-2semester/"> 
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .header {
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .mode-selector {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .mode-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        
+        .mode-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .mode-btn {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            background: white;
+            color: #667eea;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+        
+        .mode-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .mode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .question-info {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .question-number {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .audio-container {
+            background: #fff;
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+        
+        .music-icon {
+            font-size: 4em;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        audio {
+            width: 100%;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+        
+        .answer-section {
+            margin-bottom: 30px;
+        }
+        
+        .answer-title {
+            background: #e8f2ff;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            border: 2px dashed #667eea;
+            margin-bottom: 15px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+        
+        .answer-title.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .knowledge-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .know-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+        
+        .know-yes {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+        
+        .know-no {
+            background: linear-gradient(45deg, #dc3545, #fd7e14);
+            color: white;
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+        
+        .know-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .know-yes:hover {
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+        }
+        
+        .know-no:hover {
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+        }
+        
+        .control-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 140px;
+        }
+        
+        .show-answer-btn {
+            background: linear-gradient(45deg, #6f42c1, #e83e8c);
+            color: white;
+            box-shadow: 0 5px 15px rgba(111, 66, 193, 0.3);
+        }
+        
+        .show-answer-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(111, 66, 193, 0.4);
+        }
+        
+        .next-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .reset-btn {
+            background: linear-gradient(45deg, #6c757d, #495057);
+            color: white;
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+        }
+        
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.4);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .stats {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 5px solid #28a745;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .stat-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 3px solid #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .no-questions {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            color: #856404;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .mode-buttons,
+            .knowledge-buttons,
+            .control-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            button,
+            .mode-btn,
+            .know-btn {
+                width: 200px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 음악 수행평가</h1>
+            <p>음악을 듣고 제목을 맞춰보세요!</p>
+        </div>
+        
+        <div class="mode-selector">
+            <div class="mode-title">📚 학습 모드 선택</div>
+            <div class="mode-buttons">
+                <button class="mode-btn active" data-mode="all">전체 문제</button>
+                <button class="mode-btn" data-mode="known">아는 문제만</button>
+                <button class="mode-btn" data-mode="unknown">모르는 문제만</button>
+            </div>
+        </div>
+        
+        <div id="gameArea">
+            <div class="question-info">
+                <div class="question-number">
+                    <span id="modeDisplay">전체 문제</span> - 문제 <span id="currentQuestion">1</span> / <span id="totalQuestions">20</span>
+                </div>
+                <div>아래 음악을 듣고 제목을 생각해보세요</div>
+            </div>
+            
+            <div class="audio-container">
+                <div class="music-icon">🎼</div>
+                <audio id="audioPlayer" controls>
+                    <source id="audioSource" src="" type="audio/mpeg">
+                    브라우저가 오디오를 지원하지 않습니다.
+                </audio>
+            </div>
+            
+            <div class="knowledge-buttons">
+                <button id="knowYesBtn" class="know-btn know-yes">
+                    ✅ 알아요
+                </button>
+                <button id="knowNoBtn" class="know-btn know-no">
+                    ❌ 몰라요
+                </button>
+            </div>
+            
+            <div class="answer-section">
+                <div id="answerTitle" class="answer-title">
+                    정답: <span id="currentTitle">정답보기 버튼을 눌러주세요</span>
+                </div>
+            </div>
+            
+            <div class="control-buttons">
+                <button id="showAnswerBtn" class="show-answer-btn">
+                    📝 정답보기
+                </button>
+                <button id="nextBtn" class="next-btn" disabled>
+                    ➡️ 다음문제
+                </button>
+                <button id="resetBtn" class="reset-btn">
+                    🔄 처음부터
+                </button>
+            </div>
+        </div>
+        
+        <div id="noQuestionsMessage" class="no-questions" style="display: none;">
+            <h3>😊 해당 카테고리에 문제가 없습니다!</h3>
+            <p>다른 모드를 선택하거나 전체 문제를 풀어보세요.</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stats-title">📊 학습 통계</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-label">총 문제</div>
+                    <div class="stat-value" id="totalStat">20</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">아는 문제</div>
+                    <div class="stat-value" id="knownStat">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">모르는 문제</div>
+                    <div class="stat-value" id="unknownStat">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">남은 문제</div>
+                    <div class="stat-value" id="remainingStat">20</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+        // DOMContentLoaded 이벤트 리스너 추가
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOMContentLoaded event fired. Script is running."); // 이 로그가 찍히는지 확인
+
+            // 20개의 샘플 음악 데이터
+            const musicList = [
+                { title: "중세시대 - 성요한 찬가", file: "1.mp3", id: 0 },
+                { title: "르네상스 시대 - 아베마리아", file: "2.mp3", id: 1 },
+                { title: "바흐 - 토카타와 푸가 라단조", file: "3.mp3", id: 2 },
+                { title: "헨델 - 오라토리오 '메시아' 중 '할렐루야'", file: "4.mp3", id: 3 },
+                { title: "비발디 - 사계 중 봄 1악장", file: "5.mp3", id: 4 },
+                { title: "하이든 - 트럼펫 협주곡 3악장", file: "6.mp3", id: 5 },
+                { title: "베토벤 - 월광소나타 1악장", file: "7.mp3", id: 6 },
+                { title: "베토벤 - 비창소나타 3악장", file: "8.mp3", id:  7 },
+                { title: "베토벤 - 교향곡 5번 운명", file: "9.mp3", id: 8 },
+                { title: "모차르트 - 오페라 '마술피리' 중 '밤의 여왕의 아리아'", file: "10.mp3", id: 9 },
+                { title: "모차르트 - 오페라 '피가로의 결혼' 중 '더 이상 날지 못하리 나비야'", file: "11.mp3", id: 10 },
+                { title: "모차르트 - 레퀴엠 중 라크리모사", file: "12.mp3", id: 11 },
+                { title: "라벨 - 볼레로", file: "13.mp3", id: 12 },
+                { title: "드뷔시 - 달빛", file: "14.mp3", id: 13 },
+                { title: "로시니 - 오페라 '세비야의 이발사' 중 '나는 거리의 만물박사'", file: "15.mp3", id: 14 },
+                { title: "하지영 - 여행을 떠나요", file: "16.mp3", id: 15 },
+                { title: "슈베르트 - 마왕", file: "17.mp3", id: 16 },
+                { title: "키무라 유미 - 언제나 몇 번이라도", file: "18.mp3", id: 17 },
+                { title: "쇼팽 - 에튀드 흑건 op.10 no.5", file: "19.mp3", id: 18 },
+                { title: "쇼팽 - 왈츠 7번 op.64 no.2", file: "20.mp3", id: 19 },
+                { title: "쇼팽 – 에튀드 op.25 no.11 ‘겨울바람’", file: "21.mp3", id: 19 }, 
+                { title: "리스트 – 대연습곡 S.141. no.3 ‘라캄파넬라’", file: "22.mp3", id: 19 },
+                { title: "슈트라우스 - 차라투스트라는 이렇게 말했다.", file: "23.mp3", id: 19 },
+                { title: "쇤베르크 – 달에 홀린 피에로 8번 밤", file: "24.mp3", id: 19 },
+                { title: "슈톡하우젠 - 습작2", file: "25.mp3", id: 19 },
+                { title: "존 케이지 – 4:33"}
+            ];
+
+            // 게임 상태
+            let currentMode = 'all';
+            let currentQuestionNumber = 1;
+            let currentMusic = null;
+            let answerRevealed = false;
+            let usedQuestions = [];
+            
+            // 지식 상태 저장 (localStorage 대신 메모리 사용)
+            let knowledgeState = {};
+
+            // DOM 요소들
+            const modeButtons = document.querySelectorAll('.mode-btn');
+            const gameArea = document.getElementById('gameArea');
+            const noQuestionsMessage = document.getElementById('noQuestionsMessage');
+            const audioPlayer = document.getElementById('audioPlayer');
+            const audioSource = document.getElementById('audioSource');
+            const modeDisplay = document.getElementById('modeDisplay');
+            const currentQuestionSpan = document.getElementById('currentQuestion');
+            const totalQuestionsSpan = document.getElementById('totalQuestions');
+            const currentTitleSpan = document.getElementById('currentTitle');
+            const answerTitle = document.getElementById('answerTitle');
+            const knowYesBtn = document.getElementById('knowYesBtn');
+            const knowNoBtn = document.getElementById('knowNoBtn');
+            const showAnswerBtn = document.getElementById('showAnswerBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const resetBtn = document.getElementById('resetBtn');
+
+            // 통계 요소들
+            const totalStat = document.getElementById('totalStat');
+            const knownStat = document.getElementById('knownStat');
+            const unknownStat = document.getElementById('unknownStat');
+            const remainingStat = document.getElementById('remainingStat');
+
+            // 모드 선택
+            function selectMode(mode) {
+                currentMode = mode;
+                modeButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.mode === mode) {
+                        btn.classList.add('active');
+                    }
+                });
+                
+                resetGame();
+            }
+
+            // 현재 모드에 맞는 문제 목록 가져오기
+            function getQuestionsForMode() {
+                switch (currentMode) {
+                    case 'known':
+                        return musicList.filter(music => knowledgeState[music.id] === 'known');
+                    case 'unknown':
+                        return musicList.filter(music => knowledgeState[music.id] === 'unknown');
+                    default:
+                        return musicList;
+                }
+            }
+
+            // 새 문제 로드
+            function loadNewQuestion() {
+                console.log("loadNewQuestion called"); // 이 로그가 찍히는지 확인
+                const availableQuestions = getQuestionsForMode();
+                
+                // 해당 모드에 문제가 없는 경우
+                if (availableQuestions.length === 0) {
+                    showNoQuestionsMessage();
+                    return;
+                }
+                
+                const unusedQuestions = availableQuestions.filter(music => !usedQuestions.includes(music.id));
+                
+                // 한 바퀴를 다 돈 경우, 다시 처음부터 시작
+                if (unusedQuestions.length === 0) {
+                    usedQuestions = []; // 사용된 문제 목록 초기화
+                    console.log('🔄 한 바퀴 완료! 다시 처음부터 시작합니다.');
+                }
+                
+                // 다시 사용 가능한 문제들 가져오기
+                const questionsToUse = availableQuestions.filter(music => !usedQuestions.includes(music.id));
+                const randomIndex = Math.floor(Math.random() * questionsToUse.length);
+                currentMusic = questionsToUse[randomIndex];
+                usedQuestions.push(currentMusic.id);
+
+                // 오디오 소스 설정
+                console.log("Setting audio src to:", currentMusic.file); // 이 로그가 찍히는지와 경로값 확인
+                audioSource.src = currentMusic.file;
+                
+                // UI 업데이트
+                updateModeDisplay();
+                currentTitleSpan.textContent = '정답보기 버튼을 눌러주세요';
+                answerTitle.classList.remove('show');
+                answerRevealed = false;
+                
+                // 버튼 상태 초기화
+                knowYesBtn.disabled = false;
+                knowNoBtn.disabled = false;
+                showAnswerBtn.disabled = false;
+                nextBtn.disabled = true;
+                
+                // 오디오 플레이어 리로드
+                audioPlayer.load(); // 이 부분이 반드시 호출되어야 함
+                
+                updateStats();
+            }
+
+            // 모드 표시 업데이트
+            function updateModeDisplay() {
+                const availableQuestions = getQuestionsForMode();
+                const currentRound = Math.floor((usedQuestions.length - 1) / availableQuestions.length) + 1;
+                const currentPosition = ((usedQuestions.length - 1) % availableQuestions.length) + 1;
+                
+                let modeText = '';
+                switch (currentMode) {
+                    case 'known':
+                        modeText = '아는 문제만';
+                        break;
+                    case 'unknown':
+                        modeText = '모르는 문제만';
+                        break;
+                    default:
+                        modeText = '전체 문제';
+                }
+                
+                modeDisplay.textContent = modeText;
+                currentQuestionSpan.textContent = currentPosition;
+                totalQuestionsSpan.textContent = availableQuestions.length;
+                
+                // 라운드 정보 표시 (2라운드부터)
+                if (currentRound > 1 && availableQuestions.length > 0) {
+                    modeDisplay.textContent = `${modeText} (${currentRound}라운드)`;
+                }
+            }
+
+            // 문제 없음 메시지 표시
+            function showNoQuestionsMessage() {
+                gameArea.style.display = 'none';
+                noQuestionsMessage.style.display = 'block';
+            }
+
+            // 게임 영역 표시
+            function showGameArea() {
+                gameArea.style.display = 'block';
+                noQuestionsMessage.style.display = 'none';
+            }
+
+            // 알아요/몰라요 버튼 처리
+            function markKnowledge(isKnown) {
+                if (!currentMusic) return;
+                
+                knowledgeState[currentMusic.id] = isKnown ? 'known' : 'unknown';
+                knowYesBtn.disabled = true;
+                knowNoBtn.disabled = true;
+                
+                updateStats();
+            }
+
+            // 정답 보기
+            function showAnswer() {
+                if (!currentMusic) return;
+                
+                currentTitleSpan.textContent = currentMusic.title;
+                answerTitle.classList.add('show');
+                answerRevealed = true;
+                
+                showAnswerBtn.disabled = true;
+                nextBtn.disabled = false;
+            }
+
+            // 다음 문제로 이동
+            function nextQuestion() {
+                currentQuestionNumber++;
+                loadNewQuestion();
+            }
+
+            // 게임 리셋
+            function resetGame() {
+                currentQuestionNumber = 1;
+                usedQuestions = [];
+                showGameArea();
+                
+                const availableQuestions = getQuestionsForMode();
+                if (availableQuestions.length === 0) {
+                    showNoQuestionsMessage();
+                } else {
+                    loadNewQuestion();
+                }
+            }
+
+            // 전체 리셋
+            function fullReset() {
+                if (confirm('모든 진행 상황과 학습 데이터를 초기화하시겠습니까?')) {
+                    knowledgeState = {};
+                    resetGame();
+                }
+            }
+
+            // 통계 업데이트
+            function updateStats() {
+                const knownCount = Object.values(knowledgeState).filter(state => state === 'known').length;
+                const unknownCount = Object.values(knowledgeState).filter(state => state === 'unknown').length;
+                const totalCount = musicList.length;
+                const remainingCount = totalCount - knownCount - unknownCount;
+                
+                // 현재 모드의 총 문제 수 계산
+                const currentModeQuestions = getQuestionsForMode();
+                const currentRound = currentModeQuestions.length > 0 ? Math.floor((usedQuestions.length - 1) / currentModeQuestions.length) + 1 : 1;
+                const totalSolved = usedQuestions.length;
+                
+                totalStat.textContent = totalCount;
+                knownStat.textContent = knownCount;
+                unknownStat.textContent = unknownCount;
+                remainingStat.textContent = remainingCount;
+                
+                // 현재 모드 진행 상황 표시
+                if (currentModeQuestions.length > 0) {
+                    const progressInfo = document.querySelector('.progress-info');
+                    if (!progressInfo) {
+                        const newProgressInfo = document.createElement('div');
+                        newProgressInfo.className = 'stat-item progress-info';
+                        newProgressInfo.innerHTML = `
+                            <div class="stat-label">현재 모드 진행</div>
+                            <div class="stat-value" id="progressStat">-</div>
+                        `;
+                        document.querySelector('.stats-grid').appendChild(newProgressInfo);
+                    }
+                    
+                    const progressStat = document.getElementById('progressStat');
+                    if (progressStat) {
+                        progressStat.textContent = `${totalSolved}문제 풀이`;
+                    }
+                }
+            }
+
+            // 이벤트 리스너
+            modeButtons.forEach(btn => {
+                btn.addEventListener('click', () => selectMode(btn.dataset.mode));
+            });
+
+            knowYesBtn.addEventListener('click', () => markKnowledge(true));
+            knowNoBtn.addEventListener('click', () => markKnowledge(false));
+            showAnswerBtn.addEventListener('click', showAnswer);
+            nextBtn.addEventListener('click', nextQuestion);
+            resetBtn.addEventListener('click', fullReset);
+
+            // 초기화
+            // HTML 문서가 완전히 로드된 후에 실행되도록 보장
+            updateStats();
+            loadNewQuestion();
+        }); // DOMContentLoaded 이벤트 리스너 끝
+    </script>
+</body>
+</html>
